@@ -13,7 +13,7 @@ function HeroComponent() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: isDarkMode ? '#726E75' : '#FFFFFF',
+        backgroundColor: isDarkMode ? '#56666B' : '#EEE1B3',
         color: isDarkMode ? 'white' : 'black',
         flexDirection: 'column',
         gap: '1rem',
