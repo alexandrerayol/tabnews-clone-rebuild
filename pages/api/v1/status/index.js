@@ -23,9 +23,9 @@ export default async function status(request, response) {
     updated_at: updatedAt,
     dependencies: {
       database: {
+        version: dbVersionValue,
         max_connections: dbMaxConnectionsValue,
         opened_connections: dbOpenedConnectionsValue,
-        version: dbVersionValue,
       },
     },
   });

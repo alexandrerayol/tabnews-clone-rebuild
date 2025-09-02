@@ -7,11 +7,10 @@ async function query(queryObject) {
     host: process.env.POSTGRES_HOST,
     port: process.env.POSTGRES_PORT,
     database: process.env.POSTGRES_DB,
+    ssl: process.env.NODE_ENV !== "development",
   };
 
   const client = new Client(clientConfig);
-
-  console.log(`Credenciais do banco de dados: `, clientConfig);
 
   try {
     await client.connect();
