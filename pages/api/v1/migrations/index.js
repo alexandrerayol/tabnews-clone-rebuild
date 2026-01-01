@@ -11,31 +11,40 @@ export default async function migrations(request, response) {
       .json({ code: 405, error: "Method Not Allowed" });
   }
 
-  const dbClient = await database.getNewClient();
+  let dbClient;
 
-  const migrationRunnerConfig = {
-    dbClient: dbClient,
-    dryRun: true,
-    dir: join("infra", "migrations"),
-    direction: "up",
-    verbose: true,
-    migrationsTable: "pgmigrations",
-  };
+  try {
+    dbClient = await database.getNewClient();
 
-  if (request.method === "GET") {
-    const pendingMigrations = await migrationRunner(migrationRunnerConfig);
-    await dbClient.end();
-    return response.status(200).json(pendingMigrations);
-  }
+    const migrationRunnerConfig = {
+      dbClient: dbClient,
+      dryRun: true,
+      dir: join("infra", "migrations"),
+      direction: "up",
+      verbose: true,
+      migrationsTable: "pgmigrations",
+    };
 
-  if (request.method === "POST") {
-    const runnedMigrations = await migrationRunner({
-      ...migrationRunnerConfig,
-      dryRun: false,
-    });
-    await dbClient.end();
-    return response
-      .status(runnedMigrations.length === 0 ? 200 : 201)
-      .json(runnedMigrations);
+    if (request.method === "GET") {
+      const pendingMigrations = await migrationRunner(migrationRunnerConfig);
+      await dbClient.end();
+      return response.status(200).json(pendingMigrations);
+    }
+
+    if (request.method === "POST") {
+      const runnedMigrations = await migrationRunner({
+        ...migrationRunnerConfig,
+        dryRun: false,
+      });
+      await dbClient.end();
+      return response
+        .status(runnedMigrations.length === 0 ? 200 : 201)
+        .json(runnedMigrations);
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error("internal server error");
+  } finally {
+    dbClient.end;
   }
 }
